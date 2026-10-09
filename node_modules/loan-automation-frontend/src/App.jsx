@@ -55,8 +55,19 @@ const statusColors = {
 
 function App() {
   const [auth, setAuth] = useState(() => {
-    const saved = localStorage.getItem('lasAuth');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('lasAuth');
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      if (!parsed || !parsed.token || !parsed.user) {
+        localStorage.removeItem('lasAuth');
+        return null;
+      }
+      return parsed;
+    } catch (error) {
+      localStorage.removeItem('lasAuth');
+      return null;
+    }
   });
   const [toast, setToast] = useState(null);
 
@@ -92,7 +103,8 @@ function App() {
       setToast('Login successful.');
       return { requiresOtp: false };
     } catch (error) {
-      setToast(error.response?.data?.message || 'Login failed.');
+      const message = error.response?.data?.message || error.message || 'Login failed.';
+      setToast(message);
       return { requiresOtp: false };
     }
   };
@@ -115,7 +127,8 @@ function App() {
       setToast(response.data.message || 'Registration created.');
       return response.data;
     } catch (error) {
-      setToast(error.response?.data?.message || 'Registration failed.');
+      const message = error.response?.data?.message || error.message || 'Registration failed.';
+      setToast(message);
       return null;
     }
   };

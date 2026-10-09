@@ -7,11 +7,12 @@
     "frontend"
   ],
   "scripts": {
-    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "dev": "concurrently \"cross-env PORT=5001 npm --prefix backend run dev\" \"cross-env VITE_API_URL=http://localhost:5001/api npm --prefix frontend run dev\"",
     "build": "npm --prefix frontend run build",
-    "start": "npm --prefix backend run start"
+    "start": "cross-env PORT=5001 npm --prefix backend run start"
   },
   "devDependencies": {
-    "concurrently": "^9.0.1"
+    "concurrently": "^9.0.1",
+    "cross-env": "^10.0.0"
   }
 }
